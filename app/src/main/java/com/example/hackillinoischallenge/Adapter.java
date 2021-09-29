@@ -15,8 +15,8 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
-    LayoutInflater inflater;
-    List<Mentor> mentors;
+    LayoutInflater inflater; // Instantiates a layout XML file into its corresponding View objects
+    List<Mentor> mentors; // List of mentors
 
     public Adapter(Context ctx, List<Mentor> mentors){
         this.inflater = LayoutInflater.from(ctx);
@@ -39,7 +39,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = inflater.inflate(R.layout.list_items,parent,false);
+        View view = inflater.inflate(R.layout.list_items, parent, false);
         return new ViewHolder(view);
     }
 

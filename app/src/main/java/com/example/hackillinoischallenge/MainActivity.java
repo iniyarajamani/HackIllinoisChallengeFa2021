@@ -24,7 +24,6 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     List<Mentor> mentors;
-    String JSON_URL = "https://api.hackillinois.org/upload/blobstore/mentors/";
     Adapter adapter;
 
     @Override
@@ -38,34 +37,37 @@ public class MainActivity extends AppCompatActivity {
         getMentors();
     }
 
+    // Puts Mentors and their information into list of Mentors by reading through JSON URL
     private void getMentors() {
         RequestQueue queue = Volley.newRequestQueue(this);
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, JSON_URL, null, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                try {
-                    JSONArray mentorsArray = response.getJSONArray("data");
+        String JSON_URL = "https://api.hackillinois.org/upload/blobstore/mentors/";
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, JSON_URL, null,
+            new Response.Listener<JSONObject>() {
+                @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            JSONArray mentorsArray = response.getJSONArray("data");
 
-                    for (int i = 0; i < mentorsArray.length(); i++) {
-                        JSONObject mentorObject = mentorsArray.getJSONObject(i);
-                        Mentor mentor = new Mentor( mentorObject.getString("firstName"),
-                                                    mentorObject.getString("lastName"),
-                                                    mentorObject.getString("profile"),
-                                                    mentorObject.getString("description"));
-                        mentors.add(mentor);
+                            for (int i = 0; i < mentorsArray.length(); i++) {
+                                JSONObject mentorObject = mentorsArray.getJSONObject(i);
+                                Mentor mentor = new Mentor( mentorObject.getString("firstName"),
+                                                            mentorObject.getString("lastName"),
+                                                            mentorObject.getString("profile"),
+                                                            mentorObject.getString("description"));
+                                mentors.add(mentor);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                        adapter = new Adapter(getApplicationContext(), mentors);
+                        recyclerView.setAdapter(adapter);
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-                recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                adapter = new Adapter(getApplicationContext(), mentors);
-                recyclerView.setAdapter(adapter);
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d("ERROR", "onErrorResponse: " + error.getMessage());
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.d("ERROR", "onErrorResponse: " + error.getMessage());
             }
         });
 
